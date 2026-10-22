@@ -1,0 +1,512 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>College Management System | Dashboard</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: #f1f5f9;
+            color: #1e293b;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 245px;
+            height: 100vh;
+            background: #172554;
+            color: white;
+            padding: 28px 18px;
+        }
+
+        .brand {
+            font-size: 21px;
+            font-weight: 700;
+            line-height: 1.5;
+            margin-bottom: 38px;
+        }
+
+        .brand span {
+            display: block;
+            color: #93c5fd;
+            font-size: 13px;
+            font-weight: 400;
+        }
+
+        .nav-title {
+            color: #94a3b8;
+            font-size: 11px;
+            letter-spacing: 1.5px;
+            margin: 20px 12px 12px;
+            text-transform: uppercase;
+        }
+
+        .nav-link {
+            display: block;
+            padding: 13px 14px;
+            margin-bottom: 8px;
+            border-radius: 9px;
+            color: #dbeafe;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: #1d4ed8;
+            color: white;
+        }
+
+        /* Main content */
+        .main {
+            margin-left: 245px;
+            padding: 32px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+
+        .topbar h1 {
+            font-size: 28px;
+            color: #172554;
+            margin-bottom: 7px;
+        }
+
+        .subtitle {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .date-label {
+            background: white;
+            border: 1px solid #e2e8f0;
+            padding: 11px 15px;
+            border-radius: 10px;
+            color: #475569;
+            font-size: 13px;
+        }
+
+        /* Welcome banner */
+        .welcome {
+            background: linear-gradient(120deg, #1d4ed8, #2563eb, #3b82f6);
+            color: white;
+            padding: 30px;
+            border-radius: 18px;
+            margin-bottom: 28px;
+            box-shadow: 0 8px 24px rgba(37, 99, 235, 0.13);
+        }
+
+        .welcome h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .welcome p {
+            color: #dbeafe;
+            line-height: 1.7;
+            max-width: 650px;
+        }
+
+        /* Section headings */
+        .section-heading {
+            font-size: 18px;
+            font-weight: 700;
+            color: #172554;
+            margin: 28px 0 16px;
+        }
+
+        /* Statistics cards */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 22px;
+            border: 1px solid #e2e8f0;
+            border-radius: 15px;
+            box-shadow: 0 3px 12px rgba(15, 23, 42, 0.03);
+            transition: transform 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .stat-label {
+            color: #64748b;
+            font-size: 13px;
+            margin-bottom: 15px;
+        }
+
+        .stat-value {
+            color: #172554;
+            font-size: 30px;
+            font-weight: 750;
+            overflow-wrap: anywhere;
+        }
+
+        .stat-note {
+            color: #94a3b8;
+            font-size: 12px;
+            margin-top: 8px;
+        }
+
+        /* Quick action cards */
+        .actions {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .action-card {
+            display: block;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 15px;
+            padding: 23px;
+            text-decoration: none;
+            color: #1e293b;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .action-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+        }
+
+        .action-icon {
+            width: 46px;
+            height: 46px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            background: #dbeafe;
+            color: #1d4ed8;
+            font-size: 23px;
+            margin-bottom: 17px;
+        }
+
+        .action-card h3 {
+            font-size: 16px;
+            margin-bottom: 9px;
+        }
+
+        .action-card p {
+            font-size: 13px;
+            line-height: 1.6;
+            color: #64748b;
+        }
+
+        /* Recent students table */
+        .table-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-top: 16px;
+        }
+
+        .table-header {
+            padding: 20px 22px;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th, td {
+            padding: 15px 22px;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 13px;
+        }
+
+        th {
+            background: #f8fafc;
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        td {
+            color: #334155;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .course-count {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            background: #dbeafe;
+            color: #1d4ed8;
+            font-size: 12px;
+        }
+
+        .empty {
+            padding: 28px;
+            text-align: center;
+            color: #64748b;
+        }
+
+        footer {
+            text-align: center;
+            padding: 28px 10px 8px;
+            color: #94a3b8;
+            font-size: 12px;
+        }
+
+        /* Tablet */
+        @media (max-width: 1100px) {
+            .stats {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .actions {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        /* Mobile */
+        @media (max-width: 700px) {
+            .sidebar {
+                position: static;
+                width: 100%;
+                height: auto;
+                padding: 18px;
+            }
+
+            .brand {
+                margin-bottom: 15px;
+            }
+
+            .nav-title {
+                display: none;
+            }
+
+            .nav-link {
+                display: inline-block;
+                padding: 10px;
+                margin: 3px 3px 0 0;
+                font-size: 13px;
+            }
+
+            .main {
+                margin-left: 0;
+                padding: 20px 14px;
+            }
+
+            .topbar {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .topbar h1 {
+                font-size: 24px;
+            }
+
+            .welcome {
+                padding: 23px;
+            }
+
+            .welcome h2 {
+                font-size: 21px;
+            }
+
+            .stats,
+            .actions {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-value {
+                font-size: 27px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<aside class="sidebar">
+    <div class="brand">
+        College Portal
+        <span>Management System</span>
+    </div>
+
+    <div class="nav-title">Main Menu</div>
+
+    <a th:href="@{/}" class="nav-link active">▦ Dashboard</a>
+    <a th:href="@{/students}" class="nav-link">♙ Students</a>
+    <a th:href="@{/students/new}" class="nav-link">＋ Add Student</a>
+    <a th:href="@{/attendance}" class="nav-link">✓ Attendance</a>
+</aside>
+
+<main class="main">
+
+    <header class="topbar">
+        <div>
+            <h1>Dashboard</h1>
+            <p class="subtitle">
+                Overview of your college management system
+            </p>
+        </div>
+
+        <div class="date-label">
+            Academic Management Portal
+        </div>
+    </header>
+
+    <section class="welcome">
+        <h2>Welcome to College Management System 👋</h2>
+        <p>
+            Manage student information, monitor attendance and access
+            important college records from one central dashboard.
+        </p>
+    </section>
+
+    <h2 class="section-heading">System Overview</h2>
+
+    <section class="stats">
+
+        <div class="stat-card">
+            <p class="stat-label">Total Students</p>
+            <div class="stat-value" th:text="${totalStudents}">0</div>
+            <p class="stat-note">Registered student records</p>
+        </div>
+
+        <div class="stat-card">
+            <p class="stat-label">Total Courses</p>
+            <div class="stat-value" th:text="${totalCourses}">0</div>
+            <p class="stat-note">Distinct courses registered</p>
+        </div>
+
+        <div class="stat-card">
+            <p class="stat-label">Attendance Records</p>
+            <div class="stat-value" th:text="${totalAttendance}">0</div>
+            <p class="stat-note">Saved attendance entries</p>
+        </div>
+
+        <div class="stat-card">
+            <p class="stat-label">Present Records</p>
+            <div class="stat-value" th:text="${presentCount}">0</div>
+            <p class="stat-note">Attendance marked present</p>
+        </div>
+
+        <div class="stat-card">
+            <p class="stat-label">Absent Records</p>
+            <div class="stat-value" th:text="${absentCount}">0</div>
+            <p class="stat-note">Attendance marked absent</p>
+        </div>
+
+    </section>
+
+    <h2 class="section-heading">Quick Actions</h2>
+
+    <section class="actions">
+
+        <a th:href="@{/students/new}" class="action-card">
+            <div class="action-icon">＋</div>
+            <h3>Add New Student</h3>
+            <p>
+                Register a student and save their course
+                and contact information.
+            </p>
+        </a>
+
+        <a th:href="@{/students}" class="action-card">
+            <div class="action-icon">♙</div>
+            <h3>Student Records</h3>
+            <p>
+                View, edit and manage registered student information.
+            </p>
+        </a>
+
+        <a th:href="@{/attendance}" class="action-card">
+            <div class="action-icon">✓</div>
+            <h3>Attendance Management</h3>
+            <p>
+                Mark attendance, view records and update attendance status.
+            </p>
+        </a>
+
+    </section>
+
+    <h2 class="section-heading">Recently Added Students</h2>
+
+    <section class="table-card">
+        <div class="table-header">Latest Student Records</div>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Student ID</th>
+                        <th>Student Name</th>
+                        <th>Email Address</th>
+                        <th>Course</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr th:each="student : ${recentStudents}">
+                        <td th:text="${student.id}">1</td>
+                        <td th:text="${student.name}">Student Name</td>
+                        <td th:text="${student.email}">
+                            student@example.com
+                        </td>
+                        <td>
+                            <span class="course-count"
+                                  th:text="${student.course}">Course</span>
+                        </td>
+                    </tr>
+
+                    <tr th:if="${#lists.isEmpty(recentStudents)}">
+                        <td colspan="4" class="empty">
+                            No student records available.
+                            Add your first student to get started.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <footer>
+        College Management System · Dashboard
+    </footer>
+
+</main>
+
+</body>
+</html>

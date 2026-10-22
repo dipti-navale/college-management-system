@@ -1,0 +1,108 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Form - College Management</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f1f5f9;
+            padding: 30px;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 30px auto;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        h1 {
+            color: #1e3a8a;
+        }
+
+        label {
+            display: block;
+            margin-top: 18px;
+            margin-bottom: 6px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+        }
+
+        button, a {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 11px 16px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        a {
+            background: #475569;
+        }
+
+        .error {
+            background: #fee2e2;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+
+    <h1 th:text="${student.id == null ? 'Add Student' : 'Edit Student'}">
+        Student Form
+    </h1>
+
+    <div class="error"
+         th:if="${errorMessage}"
+         th:text="${errorMessage}">
+    </div>
+
+    <form th:object="${student}"
+          th:action="${student.id == null} ? @{/students} : @{/students/update/{id}(id=${student.id})}"
+          method="post">
+
+        <label for="name">Student Name</label>
+        <input id="name" type="text" th:field="*{name}" required>
+
+        <label for="email">Email</label>
+        <input id="email" type="email" th:field="*{email}" required>
+
+        <label for="course">Course</label>
+        <input id="course" type="text" th:field="*{course}" required>
+
+        <button type="submit"
+                th:text="${student.id == null ? 'Save Student' : 'Update Student'}">
+            Save Student
+        </button>
+
+        <a href="/students">Cancel</a>
+    </form>
+
+</div>
+</body>
+</html>

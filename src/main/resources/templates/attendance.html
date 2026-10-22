@@ -1,0 +1,259 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Management</title>
+
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f3f6fb;
+            color: #1e293b;
+        }
+
+        header {
+            background: #172554;
+            color: white;
+            padding: 24px 6%;
+        }
+
+        header h1 { margin: 0 0 8px; }
+        header p { margin: 0; color: #cbd5e1; }
+
+        main {
+            max-width: 1100px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 14px;
+            border: none;
+            border-radius: 7px;
+            background: #2563eb;
+            color: white;
+            text-decoration: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .home { background: #475569; }
+        .save-button { background: #15803d; }
+        .edit-button { background: #d97706; }
+
+        .card {
+            background: white;
+            padding: 22px;
+            border-radius: 14px;
+            box-shadow: 0 5px 20px #0f172a0c;
+            margin-bottom: 22px;
+        }
+
+        .message {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .table-wrap { overflow-x: auto; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 650px;
+        }
+
+        th, td {
+            padding: 13px 12px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        th {
+            background: #f8fafc;
+            color: #475569;
+        }
+
+        select, input[type="date"] {
+            padding: 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 7px;
+            background: white;
+        }
+
+        .empty {
+            padding: 25px;
+            text-align: center;
+            color: #64748b;
+        }
+
+        @media (max-width: 600px) {
+            header { padding: 22px; }
+            main { padding: 0 12px; margin-top: 20px; }
+            .card { padding: 15px; }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>Attendance Management</h1>
+    <p>College Management System</p>
+</header>
+
+<main>
+
+    <div class="topbar">
+        <div>
+            <h2>Mark Attendance</h2>
+            <p>Record and update daily student attendance.</p>
+        </div>
+
+        <a class="button home" th:href="@{/}">
+            ← Back to Dashboard
+        </a>
+    </div>
+
+    <div th:if="${successMessage}"
+         class="message success"
+         th:text="${successMessage}"></div>
+
+    <div th:if="${errorMessage}"
+         class="message error"
+         th:text="${errorMessage}"></div>
+
+    <!-- Mark Attendance -->
+
+    <section class="card">
+        <h3>Mark Student Attendance</h3>
+
+        <div th:if="${#lists.isEmpty(students)}" class="empty">
+            No students found. Please add students first.
+            <br><br>
+            <a class="button" th:href="@{/students/new}">
+                Add Student
+            </a>
+        </div>
+
+        <div th:unless="${#lists.isEmpty(students)}"
+             class="table-wrap">
+
+            <table>
+                <thead>
+                <tr>
+                    <th>Student Name</th>
+                    <th>Course</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr th:each="student : ${students}">
+                    <td th:text="${student.name}">Student Name</td>
+                    <td th:text="${student.course}">Course</td>
+                    <td colspan="3">
+                        <form th:action="@{/attendance}"
+                              method="post"
+                              style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+
+                            <input type="hidden"
+                                   name="studentId"
+                                   th:value="${student.id}">
+
+                            <input type="date"
+                                   name="attendanceDate"
+                                   th:value="${today}"
+                                   required>
+
+                            <select name="status" required>
+                                <option value="Present">Present</option>
+                                <option value="Absent">Absent</option>
+                            </select>
+
+                            <button type="submit"
+                                    class="button save-button">
+                                Save
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Attendance Records -->
+
+    <section class="card">
+        <h3>Attendance Records</h3>
+
+        <div th:if="${#lists.isEmpty(attendances)}" class="empty">
+            No attendance records found yet.
+        </div>
+
+        <div th:unless="${#lists.isEmpty(attendances)}"
+             class="table-wrap">
+
+            <table>
+                <thead>
+                <tr>
+                    <th>Student Name</th>
+                    <th>Course</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr th:each="record : ${attendances}">
+                    <td th:text="${record.student.name}">Name</td>
+                    <td th:text="${record.student.course}">Course</td>
+                    <td th:text="${record.attendanceDate}">Date</td>
+                    <td>
+                        <strong th:text="${record.status}">Present</strong>
+                    </td>
+                    <td>
+                        <a class="button edit-button"
+                           th:href="@{/attendance/edit/{id}(id=${record.id})}">
+                            Edit
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+</main>
+
+</body>
+</html>

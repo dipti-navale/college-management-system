@@ -1,0 +1,144 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Edit Attendance - College Management</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 25px;
+            font-family: Arial, sans-serif;
+            background: #f3f6fb;
+            color: #1e293b;
+        }
+
+        .container {
+            max-width: 550px;
+            margin: 35px auto;
+            padding: 28px;
+            background: white;
+            border-radius: 14px;
+            box-shadow: 0 5px 20px #0f172a12;
+        }
+
+        h1 {
+            color: #172554;
+            margin-top: 0;
+        }
+
+        p {
+            color: #64748b;
+        }
+
+        label {
+            display: block;
+            margin-top: 20px;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        select,
+        input[type="date"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 7px;
+            font-size: 15px;
+            background: white;
+        }
+
+        .button {
+            display: inline-block;
+            margin-top: 24px;
+            padding: 12px 18px;
+            border: none;
+            border-radius: 7px;
+            background: #2563eb;
+            color: white;
+            font-size: 15px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .cancel {
+            margin-left: 8px;
+            background: #475569;
+        }
+
+        @media (max-width: 500px) {
+            body {
+                padding: 12px;
+            }
+
+            .container {
+                padding: 20px;
+                margin: 15px auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Edit Attendance</h1>
+    <p>Update the student's attendance details below.</p>
+
+    <form th:action="@{/attendance/update/{id}(id=${attendance.id})}"
+          method="post">
+
+        <label for="studentId">Student</label>
+
+        <select id="studentId" name="studentId" required>
+            <option th:each="student : ${students}"
+                    th:value="${student.id}"
+                    th:text="${student.name + ' - ' + student.course}"
+                    th:selected="${student.id == attendance.student.id}">
+            </option>
+        </select>
+
+        <label for="attendanceDate">Attendance Date</label>
+
+        <input type="date"
+               id="attendanceDate"
+               name="attendanceDate"
+               th:value="${attendance.attendanceDate}"
+               required>
+
+        <label for="status">Attendance Status</label>
+
+        <select id="status" name="status" required>
+            <option value="Present"
+                    th:selected="${attendance.status == 'Present'}">
+                Present
+            </option>
+
+            <option value="Absent"
+                    th:selected="${attendance.status == 'Absent'}">
+                Absent
+            </option>
+        </select>
+
+        <button type="submit" class="button">
+            Update Attendance
+        </button>
+
+        <a th:href="@{/attendance}" class="button cancel">
+            Cancel
+        </a>
+
+    </form>
+
+</div>
+
+</body>
+</html>
